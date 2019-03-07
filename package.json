@@ -1,0 +1,23 @@
+{
+  "name": "barco-event-controller",
+  "version": "0.1.14",
+  "description": "Node controller for Barco EventManager",
+  "main": "index.js",
+  "scripts": {
+    "test": "test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/emptygalaxy/nodebarco.git"
+  },
+  "keywords": [
+    "barco"
+  ],
+  "author": "Nick Timman <info@emptygalaxy.com> (https://emptygalaxy.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/emptygalaxy/nodebarco/issues"
+  },
+  "homepage": "https://github.com/emptygalaxy/nodebarco#readme",
+  "dependencies": {"http": "*"}
+}
