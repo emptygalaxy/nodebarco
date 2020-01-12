@@ -1,118 +1,233 @@
 const https = require('https');
 const http = require('http');
 
-var ip  = "192.168.50.100";
-// var ip  = "127.0.0.1";
-var port= 9999;
-// var port= 8000;
-var id  = 1;
-var dest="ScreenDest1";
+// let _ip  = "192.168.50.100";
+var _ip  = "127.0.0.1";
+let _port= 9999;
+// var _port= 8000;
+let _id  = 1;
+let _dest="ScreenDest1";
 
-var Command = {
-    TRANSITION_ALL:  "allTrans",
+/**
+ *
+ * @type {{TRANSITION_ALL: string}}
+ */
+const TransitionCommand = {
+    TRANSITION_ALL:  'allTrans',
 };
 
-var PresetCommand = {
-    LIST:       "listPresets",
-    ACTIVATE:   "activatePreset",
-}
+/**
+ *
+ * @type {{ACTIVATE: string, LIST: string}}
+ */
+const PresetCommand = {
+    LIST:       'listPresets',
+    ACTIVATE:   'activatePreset',
+};
 
-var DestinationCommand = {
-    LIST:   "listDestinations",
-    FREEZE: "freezeDestSource",
-}
+/**
+ *
+ * @type {{FREEZE: string, LIST: string}}
+ */
+const DestinationCommand = {
+    LIST:   'listDestinations',
+    FREEZE: 'freezeDestSource',
+};
 
-var SourceCommand = {
-    LIST:   "listSources",
-}
+/**
+ *
+ * @type {{LIST: string}}
+ */
+const SourceCommand = {
+    LIST:   'listSources',
+};
 
-var ContentCommand = {
+/**
+ *
+ * @type {{CHANGE: string, LIST: string}}
+ */
+const ContentCommand = {
     LIST:   "listContent",
     CHANGE: "changeContent",
-}
+};
 
-var AuxCommand = {
+/**
+ *
+ * @type {{CHANGE: string, LIST: string}}
+ */
+const AuxCommand = {
     CHANGE: "changeAuxContent",
     LIST:   "listAuxContent",
-}
-var StillCommand = {
+};
+
+const StillCommand = {
     LIST:   "listStill",
     DELETE: "deleteStill",
     TAKE:   "takeStill",
-}
+};
 
-var RecallMode = {
+/**
+ *
+ * @type {{TRANSITION: {TRANSITION_ALL: string}, STILL: {TAKE: string, DELETE: string, LIST: string}, AUX: {CHANGE: string, LIST: string}, DESTINATION: {FREEZE: string, LIST: string}, PRESET: {ACTIVATE: string, LIST: string}, SOURCE: {LIST: string}, CONTENT: {CHANGE: string, LIST: string}}}
+ */
+const Command = {
+    TRANSITION: TransitionCommand,
+    PRESET: PresetCommand,
+    DESTINATION: DestinationCommand,
+    SOURCE: SourceCommand,
+    CONTENT: ContentCommand,
+    AUX: AuxCommand,
+    STILL: StillCommand,
+};
+
+/**
+ *
+ * @type {{RECALL_TO_PREVIEW: number, RECALL_TO_PROGRAM: number}}
+ */
+const RecallMode = {
     RECALL_TO_PREVIEW:  0,
     RECALL_TO_PROGRAM:  1
-}
+};
 
-var InclusionMode = {
+/**
+ *
+ * @type {{EXCLUDE: number, DONT_CARE: number}}
+ */
+const InclusionMode = {
     EXCLUDE:    -2,
     DONT_CARE:  -1,
-}
+};
 
-var DestinationMode = {
+/**
+ *
+ * @type {{SCREEN: number, AUX: number, BOTH: number}}
+ */
+const DestinationMode = {
     BOTH:   0,
     SCREEN: 1,
     AUX:    2,
-}
+};
 
-var DestinationType = {
+/**
+ *
+ * @type {{INPUT: number, SCREEN: number, AUX: number, BACKGROUND: number}}
+ */
+const DestinationType = {
     INPUT:      0,
     BACKGROUND: 1,
     SCREEN:     2,
     AUX:        3,
-}
+};
 
-
+/**
+ *
+ * @param {string} ip
+ * @param {number} port
+ */
 function connect(ip, port)
 {
-	ip = ip;
-	port = port;
+	_ip = ip;
+	_port = port;
 }
 
 
-//  Transitions
+/**
+ *
+ * @return {{method: *, id: *, params: *, jsonrpc: string}}
+ */
 function transitionAll()
 {
-    return makeRequest(Command.TRANSITION_ALL, {}, id);
+    return makeRequest(TransitionCommand.TRANSITION_ALL, {}, id);
 }
 
-//  Presets
-function listPresets(screenDest, auxDest)
+/**
+ *
+ * @param {string} screenDest
+ * @param {string} auxDest
+ * @param {function} callback
+ * @return {{method: *, id: *, params: *, jsonrpc: string}}
+ */
+function listPresets(screenDest, auxDest, callback)
 {
-    if(screenDest == undefined) screenDest  = InclusionMode.DONT_CARE;
-    if(auxDest == undefined)    auxDest  = InclusionMode.DONT_CARE;
+    if(screenDest === undefined) screenDest  = InclusionMode.DONT_CARE;
+    if(auxDest === undefined)    auxDest  = InclusionMode.DONT_CARE;
     
-    return makeRequest(PresetCommand.LIST, {ScreenDest:screenDest, AuxDest:auxDest});
+    return makeRequest(Command.PRESET.LIST, {ScreenDest:screenDest, AuxDest:auxDest}, null, callback);
 }
 
+/**
+ *
+ * @param {number} presetId
+ * @param {string} name
+ * @param {string} screenDest
+ * @param {string} auxDest
+ */
 function savePreset(presetId, name, screenDest, auxDest){}
+
+/**
+ *
+ * @param presetId
+ * @param name
+ */
 function renamePreset(presetId, name){}
+
+/**
+ *
+ * @param presetId
+ */
 function deletePreset(presetId){}
 
+/**
+ *
+ * @param {number} preset
+ * @param {number} mode
+ * @return {{method: *, id: *, params: *, jsonrpc: string}}
+ */
 function activatePreset(preset, mode=0)
 {
     return makeRequest(PresetCommand.ACTIVATE, {id:preset, type:mode});
 }
 
 //  Destinations
+/**
+ *
+ * @param {number} mode
+ * @return {{method: *, id: *, params: *, jsonrpc: string}}
+ */
 function listDestinations(mode=undefined)
 {
     if(mode == undefined)   mode  = DestinationMode.BOTH;
     
     return makeRequest(DestinationCommand.LIST, {type: mode});
 }
+
+/**
+ *
+ * @param {number} mode
+ * @return {{method: *, id: *, params: *, jsonrpc: string}}
+ */
 function listSources(mode=undefined)
 {
     if(mode == undefined)   mode  = DestinationMode.BOTH;
     
     return makeRequest(SourceCommand.LIST, {type: mode});
 }
+
+/**
+ *
+ * @param {string} screenDest
+ * @return {{method: *, id: *, params: *, jsonrpc: string}}
+ */
 function listContent(screenDest)
 {
     return makeRequest(ContentCommand.LIST, {id: screenDest});
 }
+
+/**
+ *
+ * @param screenDest
+ * @return {{method: *, id: *, params: *, jsonrpc: string}}
+ */
 function changeContent(screenDest)
 {
     return makeRequest(ContentCommand.LIST, {
@@ -191,41 +306,68 @@ function freezeDestination(type, subject, group, freeze=true)
     return makeRequest(DestinationsCommand.FREEZE, {type: type, id: subject, screengroup: group, mode: freeze?1:0});
 }
 
+/**
+ *
+ * @return {{method: *, id: *, params: *, jsonrpc: string}}
+ */
 function listStills()
 {
     return makeRequest(StillCommand.LIST, {});
 }
 
+/**
+ *
+ * @param {number} still
+ * @return {{method: *, id: *, params: *, jsonrpc: string}}
+ */
 function deleteStill(still)
 {
     return makeRequest(StillCommand.DELETE, {id: still});
 }
+
+/**
+ *
+ * @param {number} sourceId
+ * @param file
+ * @return {{method: *, id: *, params: *, jsonrpc: string}}
+ */
 function takeStill(sourceId, file)
 {
     return makeRequest(StillCommand.TAKE, {type: 0, id: sourceId, file: file});
 }
 
+/**
+ *
+ * @return {{method: *, id: *, params: *, jsonrpc: string}}
+ */
 function getFrameSettings()
 {
     return makeRequest(StillCommand.TAKE, {});
 }
 
 
-
-
-
-function makeRequest(method, params, id)
+/**
+ *
+ * @param {string} method
+ * @param {Object} params
+ * @param {number} id
+ * @param {function} callback
+ * @return {{method: *, id: *, params: *, jsonrpc: string}}
+ */
+function makeRequest(method, params, id, callback)
 {
-    if(params == undefined) params  = {};
-    if(id == undefined)     id  = 1;
+    if(params === undefined || params === null) params  = {};
+    if(id === undefined || id === null)     id  = 1;
     
     
-    var data    = {params:params, method:method, id:id, jsonrpc:"2.0"};
-    var body    = JSON.stringify(data);
+    let data    = {params:params, method:method, id:id, jsonrpc:"2.0"};
+    let body    = JSON.stringify(data);
+
+    console.log(data);
     
-    var options = {
-        host:   ip,
-        port:   port,
+    let options = {
+        host:   _ip,
+        port:   _port,
         method: 'POST',
         path:   '/test/',
         headers:{
@@ -234,19 +376,20 @@ function makeRequest(method, params, id)
         }
     };
     
-    
-    // var url = ["http://", ip, ":", port].join("");
-    var req = http.request(options, (resp) => {
+
+    let req = http.request(options, (resp) => {
         
         let response = '';
         
         resp.on("data", (chunk) => {
             response += chunk;
         });
-        
+
         resp.on("end", () => {
             console.log(response);
-            // console.log(JSON.parse(data).explanation);
+
+            let result = JSON.parse(response);
+            callback(result.result, null);
         });
         
     }).on("error", (err) => {
@@ -301,4 +444,8 @@ getFrameSettings();
 exports.connect = connect;
 exports.transitionAll=transitionAll;
 exports.activatePreset=activatePreset;
+exports.listPresets=listPresets;
+
+exports.Command=Command;
 exports.RecallMode=RecallMode;
+exports.DestinationType=DestinationType;

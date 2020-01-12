@@ -1,6 +1,6 @@
 {
   "name": "barco-event-controller",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "Node controller for Barco EventManager",
   "main": "index.js",
   "scripts": {
@@ -19,5 +19,7 @@
     "url": "https://github.com/emptygalaxy/nodebarco/issues"
   },
   "homepage": "https://github.com/emptygalaxy/nodebarco#readme",
-  "dependencies": {"http": "*"}
+  "dependencies": {
+    "http": "*"
+  }
 }
