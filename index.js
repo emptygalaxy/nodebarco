@@ -137,7 +137,7 @@ function connect(ip, port)
  */
 function transitionAll()
 {
-    return makeRequest(TransitionCommand.TRANSITION_ALL, {}, id);
+    return makeRequest(TransitionCommand.TRANSITION_ALL, {}, _id);
 }
 
 /**

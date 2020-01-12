@@ -1,6 +1,6 @@
 {
   "name": "barco-event-controller",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "Node controller for Barco EventManager",
   "main": "index.js",
   "scripts": {
